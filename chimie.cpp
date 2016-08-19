@@ -15,6 +15,7 @@ public:
     Compléter le code à partir d'ici
   *******************************************************/
 
+#define BONUS
 
   Flacon() = delete;
 
@@ -25,12 +26,25 @@ public:
     return sortie;
   }
 
+  Flacon operator+=(Flacon const &a) {
+    this->nom = this->nom + " + " + a.nom;
+    this->pH = NewpH(*this,a);
+    this->volume = this->volume + a.volume;
+        
+    return *this;
+  }
+
   friend Flacon operator+(Flacon const &a, Flacon const &b);
+  friend double NewpH(Flacon const &a, Flacon const &b);
 };
 
+double NewpH(Flacon const &a, Flacon const &b) {
+  return -log10((a.volume*pow(10.0, -a.pH) + b.volume*pow(10.0, -b.pH)) / (a.volume + b.volume));
+}
+
 Flacon operator+(Flacon const &a, Flacon const &b) {
-  double newpH = -log10((a.volume*pow(10.0, -a.pH) + b.volume*pow(10.0, -b.pH)) / (a.volume + b.volume));
-  return Flacon(a.nom + b.nom, a.volume + b.volume, newpH);
+  double newpH = NewpH(a,b);// -log10((a.volume*pow(10.0, -a.pH) + b.volume*pow(10.0, -b.pH)) / (a.volume + b.volume));
+  return Flacon(a.nom +" + " + b.nom, a.volume + b.volume, newpH);
 }
 
 ostream& operator<<(ostream& sortie, Flacon const &f) {
